@@ -1,0 +1,14 @@
+Player hit the red obstacle
+	Oncollider
+
+	Invoke(“PlayerHit”,1f)
+
+	Çarptığında rengi kırmızı yap sonra player rengini eski hale getirip yola devam.
+
+	Bunları ınvoke ile birlikte bir fonksiyona yaptır
+
+	Color change .material.color
+	
+onTabHoldButtonDown
+	HoldButtonDown, if countOfBrick=> 0 
+	instantiate brick player.position - (0,-1,-1)
