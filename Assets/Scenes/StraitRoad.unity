@@ -299,6 +299,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1957202257 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6174490430311949362, guid: 29d564c716c06144db5cb91744bf6cd7, type: 3}
+  m_PrefabInstance: {fileID: 193557463587152270}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1957202262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1957202257}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37813eec54758e442a6c1f21e5e7e79a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &193557463587152270
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -373,7 +390,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4521414112731352738, guid: d5f9d7e2ed8a1b64796a014170ab10f3, type: 3}
       propertyPath: m_LocalScale.z
-      value: 200
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4521414112731352738, guid: d5f9d7e2ed8a1b64796a014170ab10f3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -385,7 +402,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4521414112731352738, guid: d5f9d7e2ed8a1b64796a014170ab10f3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 99
+      value: 49
       objectReference: {fileID: 0}
     - target: {fileID: 4521414112731352738, guid: d5f9d7e2ed8a1b64796a014170ab10f3, type: 3}
       propertyPath: m_LocalRotation.w
@@ -428,17 +445,29 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 3964924805132647236, guid: 2ff3581200d6a214089b6ed9b4cb575f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4551847262418438623, guid: 2ff3581200d6a214089b6ed9b4cb575f, type: 3}
       propertyPath: m_Mass
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4551847262418438623, guid: 2ff3581200d6a214089b6ed9b4cb575f, type: 3}
-      propertyPath: m_UseGravity
-      value: 1
+      propertyPath: m_AngularDrag
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 4551847262418438623, guid: 2ff3581200d6a214089b6ed9b4cb575f, type: 3}
+      propertyPath: m_Constraints
+      value: 112
+      objectReference: {fileID: 0}
+    - target: {fileID: 4551847262418438623, guid: 2ff3581200d6a214089b6ed9b4cb575f, type: 3}
+      propertyPath: m_Interpolate
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4811552893408967626, guid: 2ff3581200d6a214089b6ed9b4cb575f, type: 3}
       propertyPath: speed
-      value: 5
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7969540961320900799, guid: 2ff3581200d6a214089b6ed9b4cb575f, type: 3}
       propertyPath: m_RootOrder

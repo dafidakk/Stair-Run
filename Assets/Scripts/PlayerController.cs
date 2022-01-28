@@ -5,42 +5,69 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float speed = 10f;
-    bool started;
+    Vector3 newVelocity = new Vector3();
+    private bool started = false;
 
     Rigidbody rb;
 
     void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        
     }
     // Start is called before the first frame update
 
     void Start()
     {
-        started = false;
-       
+        rb = GetComponent<Rigidbody>();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!started)
+        TabToStart();
+    }
+    private void FixedUpdate()
+    {
+        if (started)
         {
             Movement();
         }
-        
     }
 
     void Movement()
-    {
-        //Vector3 newVelocity = new Vector3();
-
-        if (Input.GetKey(KeyCode.Mouse0))
+    { 
+        if (started)
         {
-            rb.velocity += new Vector3(0f, 0f, speed*Time.deltaTime);
-            //started = true;
-            //Game will start by Game manager here..
+            rb.velocity += new Vector3(0, 0, speed);
+            
+            if (Input.GetKey(KeyCode.Space))
+            {
+                rb.velocity = new Vector3(0, speed, speed);
+
+            }
+            else
+            {
+                rb.velocity = new Vector3(0, -speed, speed);
+            }
         }
+
         
+
     }
+
+    void TabToStart()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            started = true;
+        }
+    }
+
+    public void HitTheObstacle()
+    {
+        started = false;
+    }
+
+
 }
