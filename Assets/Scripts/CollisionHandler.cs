@@ -6,18 +6,6 @@ public class CollisionHandler : MonoBehaviour
 {
     PlayerController player;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Player")
@@ -28,7 +16,6 @@ public class CollisionHandler : MonoBehaviour
             // bu kýsým y,-z doðrultusunda geri sektiriyor. tuðlasý var ise devam koþulu koyulacak.
             //
             Invoke("CallingFunction", 0.5f);
-            
 
         }
     }

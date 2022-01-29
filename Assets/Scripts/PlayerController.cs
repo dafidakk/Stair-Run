@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour
             
             if (Input.GetKey(KeyCode.Space))
             {
+                FindObjectOfType<BrickSpawner>().BrickAheadPlayer();
                 rb.velocity = new Vector3(0, speed, speed);
             }
             else
@@ -50,7 +51,6 @@ public class PlayerController : MonoBehaviour
                 rb.velocity = new Vector3(0, -speed, speed);
             }
         }
-
     }
 
     void TabToStart()
