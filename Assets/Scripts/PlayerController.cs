@@ -5,8 +5,9 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float speed = 10f;
-    Vector3 newVelocity = new Vector3();
+    //Vector3 newVelocity = new Vector3();
     private bool started = false;
+    //private GameObject playerPrefab;
 
     Rigidbody rb;
 
@@ -19,7 +20,6 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        
     }
 
     // Update is called once per frame
@@ -44,15 +44,12 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKey(KeyCode.Space))
             {
                 rb.velocity = new Vector3(0, speed, speed);
-
             }
             else
             {
                 rb.velocity = new Vector3(0, -speed, speed);
             }
         }
-
-        
 
     }
 
@@ -66,8 +63,22 @@ public class PlayerController : MonoBehaviour
 
     public void HitTheObstacle()
     {
-        started = false;
+        started = false;   
     }
 
+    public void AfterHitTheObstacle()
+    {
+        started = true;
+        gameObject.GetComponent<Renderer>().material.SetColor("_Color", Color.blue);
+    }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Bricks")
+        {
+            Destroy(other.gameObject);
+            FindObjectOfType<BrickSpawner>().BrickOnPlayer();
+        }
+    }
+ 
 }

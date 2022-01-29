@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CollisionHandler : MonoBehaviour
 {
+    PlayerController player;
 
     // Start is called before the first frame update
     void Start()
@@ -21,10 +22,21 @@ public class CollisionHandler : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
+            collision.gameObject.GetComponent<Renderer>().material.color = Color.red;
             collision.gameObject.GetComponent<PlayerController>().HitTheObstacle();
             collision.gameObject.GetComponent<PlayerController>().transform.position += new Vector3(0f, 2f, -3f);
             // bu kýsým y,-z doðrultusunda geri sektiriyor. tuðlasý var ise devam koþulu koyulacak.
+            //
+            Invoke("CallingFunction", 0.5f);
+            
+
         }
+    }
+
+    void CallingFunction()
+    {
+        FindObjectOfType<PlayerController>().AfterHitTheObstacle();
+        
     }
 }
     
