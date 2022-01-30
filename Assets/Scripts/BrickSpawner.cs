@@ -22,34 +22,33 @@ public class BrickSpawner : MonoBehaviour
     {
         lasPos = player.transform.position;
     }
-    public void BrickOnPlayer()
-    {
-        if (bricks == null)
+    //public void BrickOnPlayer()
+    //{
+    //    if (bricks == null)
 
-            bricks = GameObject.FindGameObjectsWithTag("BricksOnPlayer");
-            GameObject respawn  = Instantiate(brickPrefab, lasPos, brickPrefab.transform.rotation) as GameObject;
-            respawn.transform.parent = player.transform;   
-        //GameObject bricksOnPlayer = Instantiate(bricks, lasPos, Quaternion.identity);
-        //Debug.Log(lasPos);
-    }
-    public void BrickAheadPlayer()
-    {
-        if (bricks == null)
+    //        bricks = GameObject.FindGameObjectsWithTag("BricksOnPlayer");
+    //        GameObject respawn  = Instantiate(brickPrefab, lasPos, brickPrefab.transform.rotation) as GameObject;
+    //        respawn.transform.parent = player.transform;   
+    //    //GameObject bricksOnPlayer = Instantiate(bricks, lasPos, Quaternion.identity);
+    //    //Debug.Log(lasPos);
+    //}
+    //public void BrickAheadPlayer()
+    //{
+    //    if (bricks == null)
 
-            bricks = GameObject.FindGameObjectsWithTag("Bricks");
+    //        bricks = GameObject.FindGameObjectsWithTag("Bricks");
 
-        Vector3 aheadPos = new Vector3();
+    //    Vector3 aheadPos = new Vector3();
 
-        aheadPos.x = lasPos.x;
-        aheadPos.y = lasPos.y + offsetY;
-        aheadPos.z = lasPos.z + offsetZ;
+    //    aheadPos.x = lasPos.x;
+    //    aheadPos.y = lasPos.y + offsetY;
+    //    aheadPos.z = lasPos.z + offsetZ;
 
-        GameObject respawn = Instantiate(brickPrefab, aheadPos, Quaternion.AngleAxis(90,Vector3.up));
-        respawn.transform.parent = player.transform;
+    //    GameObject respawn = Instantiate(brickPrefab, aheadPos, Quaternion.AngleAxis(90,Vector3.up));
+    //    respawn.transform.parent = player.transform;
 
-        //GameObject bricksOnPlayer = Instantiate(bricks, lasPos, Quaternion.identity);
-        //Debug.Log(lasPos);
-    }
-
-
+    //    //GameObject bricksOnPlayer = Instantiate(bricks, lasPos, Quaternion.identity);
+    //    //Debug.Log(lasPos);
+    //}
+    
 }
