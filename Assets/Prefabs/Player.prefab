@@ -133,7 +133,9 @@ MonoBehaviour:
   speed: 20
   playersBack: {fileID: 0}
   playersFront: {fileID: 0}
+  brick: {fileID: 0}
   Children: []
+  Temp: []
 --- !u!1001 &3695927045997679519
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -307,11 +309,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8817906005519318092, guid: ff970561cf936214bb8f9fdd5f7d305b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.678
+      value: -0.75
       objectReference: {fileID: 0}
     - target: {fileID: 8817906005519318092, guid: ff970561cf936214bb8f9fdd5f7d305b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.433
+      value: -0.35
       objectReference: {fileID: 0}
     - target: {fileID: 8817906005519318092, guid: ff970561cf936214bb8f9fdd5f7d305b, type: 3}
       propertyPath: m_LocalRotation.w

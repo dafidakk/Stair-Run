@@ -7,17 +7,20 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speed = 10f;
     [SerializeField] private GameObject playersBack;
     [SerializeField] private GameObject playersFront;
-    [SerializeField] private GameObject brick;
+    private GameObject brick;
+    [SerializeField] private GameObject brickPrefab;
 
     public List<GameObject> Children;
+    public List<GameObject> Temp;
 
-    private GameObject[] bricks;
+    private GameObject[] bricks = new GameObject[9999];
+    private int brickIndex = 0;
     //Vector3 newVelocity = new Vector3();
     private bool started = false;
     Vector3 lasPos;
     Vector3 frontPos;
-    float sizeZ;
-    float sizeY;
+    float sizeZ = 0.05f;
+    float sizeY = 0.05f;
     //private GameObject playerPrefab;
 
     Rigidbody rb;
@@ -38,9 +41,10 @@ public class PlayerController : MonoBehaviour
     {
         TabToStart();
         lasPos = playersBack.transform.position;
-        frontPos = playersFront.transform.position;
-        sizeZ = brick.transform.localScale.z;
-        sizeY = brick.transform.localScale.y;
+        frontPos = playersFront.transform.localPosition;
+        //sizeZ = brick.transform.localScale.z;
+        //sizeY = brick.transform.localScale.y;
+        //Run();
     }
     private void FixedUpdate()
     {
@@ -54,16 +58,19 @@ public class PlayerController : MonoBehaviour
     { 
         if (started)
         {
-            rb.velocity += new Vector3(0, 0, speed);
+            transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, 0, speed), Time.deltaTime * 2);
+            //rb.velocity += new Vector3(0, 0, speed);
             
             if (Input.GetKey(KeyCode.Space))
             {
+
+                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, speed*2, speed*2), Time.deltaTime * 2);
                 BackToFront();
-                rb.velocity = new Vector3(0, speed, speed);
+
             }
             else
             {
-                rb.velocity = new Vector3(0, -speed, speed);
+                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, -speed, speed), Time.deltaTime * 2);
             }
         }
     }
@@ -91,17 +98,24 @@ public class PlayerController : MonoBehaviour
     {
         if (other.gameObject.tag == "Bricks")
         {
-            other.transform.position = lasPos;
+            
+            Vector3 positionVector = new Vector3();
+            positionVector = lasPos;
+            other.transform.parent = playersBack.transform;
+            other.transform.position = positionVector + new Vector3(0, sizeY, 0);
             other.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
             other.transform.localScale = Vector3.Scale(new Vector3(0.5f, 0.1f, 1f), new Vector3(1f, 0.5f, 0.75f));
-            other.transform.parent = playersBack.transform;
-            ChildGet();
+ 
+            bricks[brickIndex]= other.gameObject;
+            brickIndex++;
+            sizeY++;
 
+            //ChildGet();
+            Debug.Log(brickIndex);
             //Destroy(other.gameObject);
             //FindObjectOfType<BrickSpawner>().BrickOnPlayer();
         }
     }
-
     void ChildGet()
     {
         foreach (Transform child in transform)
@@ -112,26 +126,74 @@ public class PlayerController : MonoBehaviour
                 {
                     Children.Add(item.gameObject);
                 }
-            }
-            
-        }
+            }      }
         //Debug.Log(Children.Count);
-
     }
+    
 
     void BackToFront()
     {
-        foreach (GameObject item in Children)
+
+        //brick = Instantiate(brickPrefab, frontPos + new Vector3(0,0.2f,0.2f),Quaternion.AngleAxis(90, Vector3.up));
+        //brickIndex--;
+        //Debug.Log(brickIndex);
+
+        foreach (GameObject item in bricks)
         {
-            if (Children.Count != 0)
-            {
-                
-              item.transform.parent = playersFront.transform;
-              item.transform.position = frontPos;
-                           
+
+           if (brickIndex > 0)
+           {
+               Vector3 positionVector = new Vector3();
+                positionVector = frontPos;
+
+                item.transform.parent = playersFront.transform;
+                item.transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y*sizeY, transform.localPosition.z*sizeZ);
+                item.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
+                item.transform.localScale = Vector3.Scale(new Vector3(0.5f, 0.1f, 1f), new Vector3(2f, 2f, 2f));
+                brickIndex--;
+                Debug.Log(brickIndex);
+                //Destroy(bricks[brickIndex]);
+
             }
             
         }
     }
+
+    private void Run()
+    {
+        transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, 0, 1.5f), Time.deltaTime * 2);
+    }
+
+    public List<GameObject> ReplaceBackBrick()
+    {
+        Vector3 positionVector = new Vector3();
+        positionVector = lasPos;
+        Temp[0].transform.position = positionVector;
+        positionVector.z = lasPos.z + 1;
+        Temp[1].transform.position = positionVector;
+        positionVector.z = lasPos.z + 2;
+        Temp[2].transform.position = positionVector;
+        positionVector.y = lasPos.y + 1;
+        Temp[3].transform.position = positionVector;
+        positionVector.y = lasPos.y + 1;
+        positionVector.z = lasPos.z + 1;
+        Temp[4].transform.position = positionVector;
+        positionVector.y = lasPos.y + 1;
+        positionVector.z = lasPos.z + 2;
+        Temp[5].transform.position = positionVector;
+        positionVector.y = lasPos.y + 2; 
+        Temp[6].transform.position = positionVector;
+        positionVector.y = lasPos.y + 2;
+        positionVector.z = lasPos.z + 1;
+        Temp[7].transform.position = positionVector;
+        positionVector.y = lasPos.y + 2;
+        positionVector.z = lasPos.z + 2;
+        Temp[8].transform.position = positionVector;
+        return Temp;
+    }
+
+   
+      
+    
  
 }
