@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
     private GameObject brick;
     [SerializeField] private GameObject brickPrefab;
 
+    private GameObject frontBrick;
+
     public List<GameObject> Children;
     public List<GameObject> Temp;
 
@@ -48,7 +50,7 @@ public class PlayerController : MonoBehaviour
         //Run();
         for (int i = 0; i < brickIndex; i++)
         {
-            bricks[i].transform.position = playersFront.transform.position + new Vector3(0, sizeY * i, 0);
+            bricks[i].transform.position = playersBack.transform.position + new Vector3(0, sizeY * i, 0);
         }
     }
     private void FixedUpdate()
@@ -66,16 +68,17 @@ public class PlayerController : MonoBehaviour
             transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, 0, speed), Time.deltaTime * 2);
             //rb.velocity += new Vector3(0, 0, speed);
             
-            if (Input.GetKey(KeyCode.Space))
+            if (Input.GetMouseButton(0))
             {
-
-                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, speed*2, speed*2), Time.deltaTime * 2);
+                rb.useGravity = false;
+                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, speed*2, 0), Time.deltaTime * 2);
                 BackToFront();
 
             }
             else
             {
-                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, -speed, speed), Time.deltaTime * 2);
+                rb.useGravity = true;
+                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, -speed*2, speed), Time.deltaTime * 2);
             }
         }
     }
@@ -107,7 +110,7 @@ public class PlayerController : MonoBehaviour
             Vector3 positionVector = new Vector3();
             positionVector = lasPos;
             other.transform.parent = playersBack.transform;
-            other.transform.localPosition = positionVector + new Vector3(0, sizeY* brickSpace, 0);
+            other.transform.localPosition = positionVector + new Vector3(0, sizeY*brickSpace, 0);
             other.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
             other.transform.localScale = Vector3.Scale(new Vector3(0.5f, 0.1f, 1f), new Vector3(1f, 0.5f, 0.75f));
  
@@ -134,7 +137,7 @@ public class PlayerController : MonoBehaviour
             }      }
         //Debug.Log(Children.Count);
     }
-    
+
 
     void BackToFront()
     {
@@ -143,25 +146,56 @@ public class PlayerController : MonoBehaviour
         //brickIndex--;
         //Debug.Log(brickIndex);
 
+        //if (bricks == null)
+
+        //    bricks = GameObject.FindGameObjectsWithTag("Bricks");
+
+        //Vector3 aheadPos = new Vector3();
+
+        //aheadPos.x = lasPos.x;
+        //aheadPos.y = lasPos.y + offsetY;
+        //aheadPos.z = lasPos.z + offsetZ;
+
+        //GameObject respawn = Instantiate(brickPrefab, aheadPos, Quaternion.AngleAxis(90, Vector3.up));
+        //respawn.transform.parent = player.transform;
+
         foreach (GameObject item in bricks)
         {
 
-           if (brickIndex > 0)
-           {
-               Vector3 positionVector = new Vector3();
-                positionVector = frontPos;
+            if (brickIndex > 0)
+            {
 
-                item.transform.parent = playersFront.transform;
-                item.transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y*sizeY, transform.localPosition.z*sizeZ);
-                item.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
-                item.transform.localScale = Vector3.Scale(new Vector3(0.5f, 0.1f, 1f), new Vector3(2f, 2f, 2f));
-                brickIndex--;
-                Debug.Log(brickIndex);
-                //Destroy(bricks[brickIndex]);
+                if (frontBrick == null)
+                {
+                    frontBrick = Instantiate(brickPrefab, transform.position + new Vector3(0, 0.2f, 0.2f), Quaternion.AngleAxis(90, Vector3.up));
+                    //frontBrick.transform.parent = playersFront.transform;
+                    brickIndex--;
+                    Destroy(bricks[brickIndex]);
+                }
+                else
+                {
+                    frontBrick = Instantiate(brickPrefab, frontBrick.transform.position + new Vector3(0, 0.2f, 0.2f), Quaternion.AngleAxis(90, Vector3.up));
+                    //frontBrick.transform.parent = playersFront.transform;
+                    brickIndex--;
+                    Destroy(bricks[brickIndex]);
+                }
+                 
+                //Vector3 positionVector = new Vector3();
+                //positionVector = frontPos;
+
+                //item.transform.parent = playersFront.transform;
+                //item.transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y*sizeY, transform.localPosition.z*sizeZ);
+                //item.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
+                //item.transform.localScale = Vector3.Scale(new Vector3(0.5f, 0.1f, 1f), new Vector3(2f, 2f, 2f));
+                //brickIndex--;
+                //Debug.Log(brickIndex);
+                ////Destroy(bricks[brickIndex]);
 
             }
-            
         }
+        
+            
+
     }
 
     private void Run()
