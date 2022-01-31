@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
 
     private GameObject[] bricks = new GameObject[9999];
     private int brickIndex = 0;
+    private int brickSpace = 0;
     //Vector3 newVelocity = new Vector3();
     private bool started = false;
     Vector3 lasPos;
@@ -40,11 +41,15 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         TabToStart();
-        lasPos = playersBack.transform.position;
+        lasPos = playersBack.transform.localPosition;
         frontPos = playersFront.transform.localPosition;
         //sizeZ = brick.transform.localScale.z;
         //sizeY = brick.transform.localScale.y;
         //Run();
+        for (int i = 0; i < brickIndex; i++)
+        {
+            bricks[i].transform.position = playersFront.transform.position + new Vector3(0, sizeY * i, 0);
+        }
     }
     private void FixedUpdate()
     {
@@ -102,13 +107,13 @@ public class PlayerController : MonoBehaviour
             Vector3 positionVector = new Vector3();
             positionVector = lasPos;
             other.transform.parent = playersBack.transform;
-            other.transform.position = positionVector + new Vector3(0, sizeY, 0);
+            other.transform.localPosition = positionVector + new Vector3(0, sizeY* brickSpace, 0);
             other.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
             other.transform.localScale = Vector3.Scale(new Vector3(0.5f, 0.1f, 1f), new Vector3(1f, 0.5f, 0.75f));
  
             bricks[brickIndex]= other.gameObject;
             brickIndex++;
-            sizeY++;
+            brickSpace++;
 
             //ChildGet();
             Debug.Log(brickIndex);
