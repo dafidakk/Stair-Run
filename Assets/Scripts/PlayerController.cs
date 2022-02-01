@@ -77,6 +77,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
+                frontBrick = null;
                 rb.useGravity = true;
                 transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, -speed*2, speed), Time.deltaTime * 2);
             }
@@ -162,23 +163,27 @@ public class PlayerController : MonoBehaviour
         foreach (GameObject item in bricks)
         {
 
-            if (brickIndex > 0)
+            if (frontBrick == null)
             {
 
-                if (frontBrick == null)
+                if (brickIndex > 0)
                 {
                     frontBrick = Instantiate(brickPrefab, transform.position + new Vector3(0, 0.2f, 0.2f), Quaternion.AngleAxis(90, Vector3.up));
                     //frontBrick.transform.parent = playersFront.transform;
                     brickIndex--;
                     Destroy(bricks[brickIndex]);
                 }
-                else
+            }
+            else
+            {
+                if (brickIndex > 0)
                 {
                     frontBrick = Instantiate(brickPrefab, frontBrick.transform.position + new Vector3(0, 0.2f, 0.2f), Quaternion.AngleAxis(90, Vector3.up));
                     //frontBrick.transform.parent = playersFront.transform;
                     brickIndex--;
                     Destroy(bricks[brickIndex]);
                 }
+            }
                  
                 //Vector3 positionVector = new Vector3();
                 //positionVector = frontPos;
@@ -191,7 +196,7 @@ public class PlayerController : MonoBehaviour
                 //Debug.Log(brickIndex);
                 ////Destroy(bricks[brickIndex]);
 
-            }
+            
         }
         
             
