@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a8945e10135d62345b414226872d33fc
+guid: 53dca4d3b19e5e24a80c33f3859e8c13
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable:
@@ -54,12 +54,7 @@ ModelImporter:
   - first:
       74: -2469224417514991532
     second: CharacterArmature|Walk_Carry
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Skin
-    second: {fileID: 2100000, guid: c6fde0a05bb15cf43983bf00bc35476b, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0

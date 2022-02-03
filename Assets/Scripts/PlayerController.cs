@@ -9,11 +9,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject playersFront;
     private GameObject brick;
     [SerializeField] private GameObject brickPrefab;
+    [SerializeField] private Animator animator;
 
     private GameObject frontBrick;
-
-    public List<GameObject> Children;
-    public List<GameObject> Temp;
 
     private GameObject[] bricks = new GameObject[9999];
     private int brickIndex = 0;
@@ -43,6 +41,8 @@ public class PlayerController : MonoBehaviour
         {
             bricks[i].transform.position = playersBack.transform.position + new Vector3(0, sizeY * i, 0);
         }
+        animator.SetBool("started", started);
+        animator.SetBool("mousebuttondown", Input.GetMouseButton(0));
     }
     private void FixedUpdate()
     {
