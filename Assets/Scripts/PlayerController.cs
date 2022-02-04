@@ -29,10 +29,12 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        animator = GetComponentInChildren <Animator>();
     }
     void Update()
     {
         TabToStart();
+        
         lasPos = playersBack.transform.localPosition;
         frontPos = playersFront.transform.localPosition;
         sizeZ = brickPrefab.transform.localScale.z;
@@ -41,14 +43,15 @@ public class PlayerController : MonoBehaviour
         {
             bricks[i].transform.position = playersBack.transform.position + new Vector3(0, sizeY * i, 0);
         }
-        animator.SetBool("started", started);
-        animator.SetBool("mousebuttondown", Input.GetMouseButton(0));
+        
+
     }
     private void FixedUpdate()
     {
         if (started)
         {
             Movement();
+            
         }
     }
 
@@ -56,21 +59,29 @@ public class PlayerController : MonoBehaviour
     { 
         if (started)
         {
-            transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, 0, 2f), Time.deltaTime * 2);
+            transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, 0, 2f), Time.deltaTime);
             //rb.velocity += new Vector3(0, 0, speed);
-            
+            animator.SetBool("started", true);
+
+
+
+
             if (Input.GetMouseButton(0))
             {
                 rb.useGravity = false;
-                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, 2.5f, 3f), Time.deltaTime * 2);
+                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, 2.5f, 3f), Time.deltaTime);
                 BackToFront();
+                animator.SetBool("jump", true);
+                animator.SetBool("started", true);
 
             }
             else
             {
+                animator.SetBool("jump", true);
                 frontBrick = null;
                 rb.useGravity = true;
-                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, -speed, speed), Time.deltaTime * 2);
+                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, -speed, speed), Time.deltaTime );
+                animator.SetBool("started", false);
             }
         }
     }
