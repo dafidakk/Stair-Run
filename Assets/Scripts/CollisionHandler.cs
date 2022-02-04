@@ -5,6 +5,7 @@ using UnityEngine;
 public class CollisionHandler : MonoBehaviour
 {
     PlayerController player;
+    
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -12,10 +13,10 @@ public class CollisionHandler : MonoBehaviour
         {
             collision.gameObject.GetComponent<Renderer>().material.color = Color.red;
             collision.gameObject.GetComponent<PlayerController>().HitTheObstacle();
-            collision.gameObject.GetComponent<PlayerController>().transform.position += new Vector3(0f, 2f, -3f);
+            collision.gameObject.GetComponent<PlayerController>().transform.position += new Vector3(0f, 3f, -3f);
             // bu kýsým y,-z doðrultusunda geri sektiriyor. tuðlasý var ise devam koþulu koyulacak.
             //
-            Invoke("CallingFunction", 0.5f);
+            Invoke("CallingFunction", 0.3f);
 
         }
     }

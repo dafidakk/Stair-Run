@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float speed = 10f;
+    [SerializeField] public float speed = 1.5f;
     [SerializeField] private GameObject playersBack;
     [SerializeField] private GameObject playersFront;
     private GameObject brick;
@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
         TabToStart();
         
         lasPos = playersBack.transform.localPosition;
-        frontPos = playersFront.transform.localPosition;
+        frontPos = playersFront.transform.position;
         sizeZ = brickPrefab.transform.localScale.z;
         sizeY = brickPrefab.transform.localScale.y;
         for (int i = 0; i < brickIndex; i++)
@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
     { 
         if (started)
         {
-            transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, 0, 2f), Time.deltaTime);
+            transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, 0, speed), Time.deltaTime*2);
             //rb.velocity += new Vector3(0, 0, speed);
             animator.SetBool("started", true);
 
@@ -69,19 +69,19 @@ public class PlayerController : MonoBehaviour
             if (Input.GetMouseButton(0))
             {
                 rb.useGravity = false;
-                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, 2.5f, 3f), Time.deltaTime);
+                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, speed, speed), Time.deltaTime*2);
                 BackToFront();
-                animator.SetBool("jump", true);
-                animator.SetBool("started", true);
+                
+               
 
             }
             else
             {
-                animator.SetBool("jump", true);
+                
                 frontBrick = null;
                 rb.useGravity = true;
-                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, -speed, speed), Time.deltaTime );
-                animator.SetBool("started", false);
+                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, -speed, speed), Time.deltaTime*2 );
+                
             }
         }
     }
@@ -116,7 +116,7 @@ public class PlayerController : MonoBehaviour
             other.transform.parent = playersBack.transform;
             other.transform.localPosition = positionVector + new Vector3(0, sizeY, 0);
             other.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
-            other.transform.localScale = brickPrefab.transform.localScale;
+            //other.transform.localScale = brickPrefab.transform.localScale;
  
             bricks[brickIndex]= other.gameObject;
             brickIndex++;
@@ -137,7 +137,7 @@ public class PlayerController : MonoBehaviour
 
                 if (brickIndex > 0)
                 {
-                    frontBrick = Instantiate(brickPrefab, transform.position + new Vector3(0, brickPrefab.transform.localScale.y, brickPrefab.transform.localScale.z/2), Quaternion.AngleAxis(90, Vector3.up));
+                    frontBrick = Instantiate(brickPrefab, frontPos + new Vector3(0, brickPrefab.transform.localScale.y, brickPrefab.transform.localScale.z/2), Quaternion.AngleAxis(90, Vector3.up));
                     //frontBrick.transform.parent = playersFront.transform;
                     
                     brickIndex--;
