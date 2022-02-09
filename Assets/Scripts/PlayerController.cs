@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     private int brickSpace = 0;
     //Vector3 newVelocity = new Vector3();
     private bool started = false;
+    private bool isMouseDown = false;
     Vector3 lasPos;
     Vector3 frontPos;
     float sizeZ;
@@ -30,6 +31,7 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren <Animator>();
+        StartCoroutine(BackToFront());
     }
     void Update()
     {
@@ -43,15 +45,13 @@ public class PlayerController : MonoBehaviour
         {
             bricks[i].transform.position = playersBack.transform.position + new Vector3(0, sizeY * i, 0);
         }
-        
-
     }
     private void FixedUpdate()
     {
         if (started)
         {
             Movement();
-            
+
         }
     }
 
@@ -59,36 +59,37 @@ public class PlayerController : MonoBehaviour
     { 
         if (started)
         {
-            transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, 0, speed), Time.deltaTime*2);
+            //transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, 0, speed), Time.deltaTime*2);
+            transform.position = transform.forward * speed * Time.deltaTime;
             //rb.velocity += new Vector3(0, 0, speed);
             animator.SetBool("started", true);
-
-
-
-
+             
             if (Input.GetMouseButton(0))
             {
+
+                isMouseDown = true;
                 rb.useGravity = false;
                 transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, speed, speed), Time.deltaTime*2);
                 BackToFront();
                 
-               
-
             }
-            else
+
+            else 
             {
                 
-                frontBrick = null;
                 rb.useGravity = true;
-                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, -speed, speed), Time.deltaTime*2 );
-                
-            }
+                isMouseDown = false;
+                frontBrick = null;
+                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, -speed*2, speed), Time.deltaTime * 2);
+
+            } 
+            
         }
     }
 
     void TabToStart()
     {
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButtonDown(0))
         {
             started = true;
         }
@@ -126,37 +127,56 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void BackToFront()
+    void turn15Degree()
     {
 
-        foreach (GameObject item in bricks)
+        transform.localRotation *= Quaternion.Euler(0, -15, 0);
+
+    }
+
+    IEnumerator BackToFront()
+    {
+
+
+        while (true)
         {
-
-            if (frontBrick == null)
-            {
-
-                if (brickIndex > 0)
+            //foreach (GameObject item in bricks)
+            //{
+            if (isMouseDown)
+            { 
+                if (frontBrick == null)
                 {
-                    frontBrick = Instantiate(brickPrefab, frontPos + new Vector3(0, brickPrefab.transform.localScale.y, brickPrefab.transform.localScale.z/2), Quaternion.AngleAxis(90, Vector3.up));
-                    //frontBrick.transform.parent = playersFront.transform;
+
+                    if (brickIndex > 0)
+                    {
+                        frontBrick = Instantiate(brickPrefab, frontPos + new Vector3(0, brickPrefab.transform.localScale.y*1.2f , brickPrefab.transform.localScale.z/1.5f), Quaternion.AngleAxis(90, Vector3.up));
+                        //frontBrick.transform.parent = playersFront.transform;
                     
-                    brickIndex--;
-                    Destroy(bricks[brickIndex]);
+                        brickIndex--;
+                        Destroy(bricks[brickIndex]);
+                    }
+                    else
+                    {
+                        rb.useGravity = true;
+                    }
                 }
-            }
-            else
-            {
-                if (brickIndex > 0)
+                else
                 {
-                    frontBrick = Instantiate(brickPrefab, frontBrick.transform.position + new Vector3(0, brickPrefab.transform.localScale.y, brickPrefab.transform.localScale.z/2), Quaternion.AngleAxis(90, Vector3.up));
-                    //frontBrick.transform.parent = playersFront.transform;
-                    brickIndex--;
-                    Destroy(bricks[brickIndex]);
+                    if (brickIndex > 0)
+                    {
+                        frontBrick = Instantiate(brickPrefab, frontBrick.transform.position + new Vector3(0, brickPrefab.transform.localScale.y*1.2f, brickPrefab.transform.localScale.z/1.5f), Quaternion.AngleAxis(90, Vector3.up));
+                        //frontBrick.transform.parent = playersFront.transform;
+                        brickIndex--;
+                        Destroy(bricks[brickIndex]);
+                    }
                 }
+
             }
-            
-        }
-        
+
+            yield return new WaitForSeconds(0.07f);
+
+        } 
+        //} 
     }
  
 }
