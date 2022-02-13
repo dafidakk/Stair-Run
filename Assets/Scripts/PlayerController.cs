@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     private bool isMouseDown = false;
     Vector3 lasPos;
     Vector3 frontPos;
+    float sizeZ;
     float sizeY;
     //private GameObject playerPrefab;
 
@@ -35,24 +36,23 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         TabToStart();
-         
+        
+        lasPos = playersBack.transform.localPosition;
+        frontPos = playersFront.transform.position;
+        sizeZ = brickPrefab.transform.localScale.z;
         sizeY = brickPrefab.transform.localScale.y;
-
+        for (int i = 0; i < brickIndex; i++)
+        {
+            bricks[i].transform.position = playersBack.transform.position + new Vector3(0, sizeY * i, 0);
+        }
+    }
+    private void FixedUpdate()
+    {
         if (started)
         {
             Movement();
 
         }
-
-        for (int i = 0; i < brickIndex; i++)
-        {
-            bricks[i].transform.position = playersBack.transform.position + new Vector3(0, sizeY * i, 0);
-        }
-       
-    }
-    private void FixedUpdate()
-    {
-        
     }
 
     void Movement()
@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
         if (started)
         {
             //transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, 0, speed), Time.deltaTime*2);
-            transform.position += new Vector3(0, 0, speed*Time.deltaTime);
+            transform.position = transform.forward * speed * Time.deltaTime;
             //rb.velocity += new Vector3(0, 0, speed);
             animator.SetBool("started", true);
              
@@ -69,8 +69,8 @@ public class PlayerController : MonoBehaviour
 
                 isMouseDown = true;
                 rb.useGravity = false;
-                transform.position += new Vector3(0, speed * Time.deltaTime, speed * Time.deltaTime);
-               // BackToFront();
+                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, speed, speed), Time.deltaTime*2);
+                BackToFront();
                 
             }
 
@@ -80,7 +80,7 @@ public class PlayerController : MonoBehaviour
                 rb.useGravity = true;
                 isMouseDown = false;
                 frontBrick = null;
-                transform.position += new Vector3(0, -speed * Time.deltaTime, speed * Time.deltaTime);
+                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, -speed*2, speed), Time.deltaTime * 2);
 
             } 
             
@@ -112,13 +112,12 @@ public class PlayerController : MonoBehaviour
         {
             
             Vector3 positionVector = new Vector3();
-            lasPos = playersBack.transform.localPosition;
             positionVector = lasPos;
             sizeY = other.transform.localScale.y;
             other.transform.parent = playersBack.transform;
             other.transform.localPosition = positionVector + new Vector3(0, sizeY, 0);
             other.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
-            other.transform.localScale = new Vector3(1f, 0.25f, 1.2f);
+            //other.transform.localScale = brickPrefab.transform.localScale;
  
             bricks[brickIndex]= other.gameObject;
             brickIndex++;
@@ -150,29 +149,25 @@ public class PlayerController : MonoBehaviour
 
                     if (brickIndex > 0)
                     {
-                        frontPos = playersFront.transform.position;
-                        frontBrick = Instantiate(brickPrefab, frontPos , Quaternion.AngleAxis(90, Vector3.up));
+                        frontBrick = Instantiate(brickPrefab, frontPos + new Vector3(0, brickPrefab.transform.localScale.y*1.2f , brickPrefab.transform.localScale.z/1.5f), Quaternion.AngleAxis(90, Vector3.up));
                         //frontBrick.transform.parent = playersFront.transform;
                     
-                        brickIndex--;
-                        Destroy(bricks[brickIndex]);
-                    }
-                    
-                }
-                else
-                {
-                    if (brickIndex > 0)
-                    {
-                        frontBrick = Instantiate(brickPrefab, frontBrick.transform.position + new Vector3(0, brickPrefab.transform.localScale.y, brickPrefab.transform.localScale.z/4), Quaternion.AngleAxis(90, Vector3.up));
-                        //frontBrick.transform.parent = playersFront.transform;
                         brickIndex--;
                         Destroy(bricks[brickIndex]);
                     }
                     else
                     {
                         rb.useGravity = true;
-                        isMouseDown = false;
-                        frontBrick = null;
+                    }
+                }
+                else
+                {
+                    if (brickIndex > 0)
+                    {
+                        frontBrick = Instantiate(brickPrefab, frontBrick.transform.position + new Vector3(0, brickPrefab.transform.localScale.y*1.2f, brickPrefab.transform.localScale.z/1.5f), Quaternion.AngleAxis(90, Vector3.up));
+                        //frontBrick.transform.parent = playersFront.transform;
+                        brickIndex--;
+                        Destroy(bricks[brickIndex]);
                     }
                 }
 
