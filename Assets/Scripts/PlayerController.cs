@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
         if (started)
         {
             //transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, 0, speed), Time.deltaTime*2);
-            transform.position = transform.forward * speed * Time.deltaTime;
+            transform.position += new Vector3(0, 0, speed * Time.deltaTime);
             //rb.velocity += new Vector3(0, 0, speed);
             animator.SetBool("started", true);
              
@@ -69,8 +69,17 @@ public class PlayerController : MonoBehaviour
 
                 isMouseDown = true;
                 rb.useGravity = false;
-                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, speed, speed), Time.deltaTime*2);
-                BackToFront();
+
+                if (brickIndex > 0)
+                {
+                    transform.position += new Vector3(0, speed * Time.deltaTime * 1.4f, speed * Time.deltaTime);
+                }
+                else
+                {
+                    transform.position += new Vector3(0, -speed * Time.deltaTime * 1.4f, speed * Time.deltaTime);
+                }
+                
+                //BackToFront();
                 
             }
 
@@ -80,7 +89,7 @@ public class PlayerController : MonoBehaviour
                 rb.useGravity = true;
                 isMouseDown = false;
                 frontBrick = null;
-                transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, -speed*2, speed), Time.deltaTime * 2);
+                transform.position += new Vector3(0, -speed * Time.deltaTime, speed * Time.deltaTime);
 
             } 
             
@@ -117,11 +126,10 @@ public class PlayerController : MonoBehaviour
             other.transform.parent = playersBack.transform;
             other.transform.localPosition = positionVector + new Vector3(0, sizeY, 0);
             other.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
-            //other.transform.localScale = brickPrefab.transform.localScale;
- 
+            other.transform.localScale = new Vector3(1f, 0.25f, 1.2f);
+
             bricks[brickIndex]= other.gameObject;
             brickIndex++;
-            //brickSpace++;
             Debug.Log(brickIndex);
      
         }
@@ -149,7 +157,7 @@ public class PlayerController : MonoBehaviour
 
                     if (brickIndex > 0)
                     {
-                        frontBrick = Instantiate(brickPrefab, frontPos + new Vector3(0, brickPrefab.transform.localScale.y*1.2f , brickPrefab.transform.localScale.z/1.5f), Quaternion.AngleAxis(90, Vector3.up));
+                        frontBrick = Instantiate(brickPrefab, frontPos + new Vector3(0, brickPrefab.transform.localScale.y , brickPrefab.transform.localScale.z), Quaternion.LookRotation(Vector3.forward));
                         //frontBrick.transform.parent = playersFront.transform;
                     
                         brickIndex--;
@@ -164,16 +172,22 @@ public class PlayerController : MonoBehaviour
                 {
                     if (brickIndex > 0)
                     {
-                        frontBrick = Instantiate(brickPrefab, frontBrick.transform.position + new Vector3(0, brickPrefab.transform.localScale.y*1.2f, brickPrefab.transform.localScale.z/1.5f), Quaternion.AngleAxis(90, Vector3.up));
+                        frontBrick = Instantiate(brickPrefab, frontBrick.transform.position + new Vector3(0, brickPrefab.transform.localScale.y, brickPrefab.transform.localScale.z), Quaternion.LookRotation(Vector3.forward));
                         //frontBrick.transform.parent = playersFront.transform;
                         brickIndex--;
                         Destroy(bricks[brickIndex]);
+                    }
+                    else
+                    {
+                        rb.useGravity = true;
+                        isMouseDown = false;
+                        frontBrick = null;
                     }
                 }
 
             }
 
-            yield return new WaitForSeconds(0.07f);
+            yield return new WaitForSeconds(0.125f);
 
         } 
         //} 

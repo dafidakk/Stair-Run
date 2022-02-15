@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class CollisionHandler : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class CollisionHandler : MonoBehaviour
     private void Start()
     {
         _playerController = FindObjectOfType<PlayerController>();
+        DOTween.Init();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -20,12 +22,16 @@ public class CollisionHandler : MonoBehaviour
         {
             var renderer = _playerController.GetComponent<Renderer>();
             renderer.material.color = Color.red;
+            var dist = transform.position - new Vector3(0f, 3f, -3f);
 
             _playerController.HitTheObstacle();
-            _playerController.transform.position += new Vector3(0f, 3f, -3f);
+             
+            collision.transform.DOMove(transform.position + new Vector3(0f, 4f, -3f), 0.5f);
+            //_playerController.transform.position += new Vector3(0f, 3f, -3f);
             // bu kýsým y,-z doðrultusunda geri sektiriyor. tuðlasý var ise devam koþulu koyulacak.
             //
-            Invoke("CallingFunction", 0.3f);
+            //Invoke("CallingFunction", 0.3f);
+            _playerController.AfterHitTheObstacle();
         }
     }
 
