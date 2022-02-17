@@ -1,17 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Dreamteck.Splines;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] public float speed = 1.5f;
+    [SerializeField] public float speedY = 1.5f;
+    [SerializeField] public float speedZ = 1.5f;
     [SerializeField] private GameObject playersBack;
     [SerializeField] private GameObject playersFront;
     private GameObject brick;
     [SerializeField] private GameObject brickPrefab;
+    [SerializeField] private GameObject stairPrefab;
     [SerializeField] private Animator animator;
+    [SerializeField] private bool _isSpline = false;
 
     private GameObject frontBrick;
+    private SplineFollower _splineFollower;
 
     private GameObject[] bricks = new GameObject[9999];
     private int brickIndex = 0;
@@ -32,11 +38,13 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         animator = GetComponentInChildren <Animator>();
         StartCoroutine(BackToFront());
+        _splineFollower = GetComponent<SplineFollower>();
     }
     void Update()
     {
         TabToStart();
-        
+        rb.useGravity = true;
+
         lasPos = playersBack.transform.localPosition;
         frontPos = playersFront.transform.position;
         sizeZ = brickPrefab.transform.localScale.z;
@@ -63,6 +71,11 @@ public class PlayerController : MonoBehaviour
             transform.position += new Vector3(0, 0, speed * Time.deltaTime);
             //rb.velocity += new Vector3(0, 0, speed);
             animator.SetBool("started", true);
+
+            if (_isSpline)
+            {
+                SplineMovement();
+            }
              
             if (Input.GetMouseButton(0))
             {
@@ -72,11 +85,12 @@ public class PlayerController : MonoBehaviour
 
                 if (brickIndex > 0)
                 {
-                    transform.position += new Vector3(0, speed * Time.deltaTime * 1.4f, speed * Time.deltaTime);
+                    //transform.Translate(new Vector3(0, Time.deltaTime*speed, speed * Time.deltaTime));
+                    transform.position += new Vector3(0, speedY * Time.deltaTime , speedZ * Time.deltaTime);
                 }
                 else
                 {
-                    transform.position += new Vector3(0, -speed * Time.deltaTime * 1.4f, speed * Time.deltaTime);
+                    transform.position += new Vector3(0, -speedY * Time.deltaTime, speedZ * Time.deltaTime);
                 }
                 
                 //BackToFront();
@@ -126,7 +140,7 @@ public class PlayerController : MonoBehaviour
             other.transform.parent = playersBack.transform;
             other.transform.localPosition = positionVector + new Vector3(0, sizeY, 0);
             other.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
-            other.transform.localScale = new Vector3(1f, 0.25f, 1.2f);
+            other.transform.localScale = new Vector3(0.5f, 0.125f, 0.6f);
 
             bricks[brickIndex]= other.gameObject;
             brickIndex++;
@@ -157,7 +171,8 @@ public class PlayerController : MonoBehaviour
 
                     if (brickIndex > 0)
                     {
-                        frontBrick = Instantiate(brickPrefab, frontPos + new Vector3(0, brickPrefab.transform.localScale.y , brickPrefab.transform.localScale.z), Quaternion.LookRotation(Vector3.forward));
+
+                        frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(0, stairPrefab.transform.localScale.y , stairPrefab.transform.localScale.z), Quaternion.identity);
                         //frontBrick.transform.parent = playersFront.transform;
                     
                         brickIndex--;
@@ -172,7 +187,7 @@ public class PlayerController : MonoBehaviour
                 {
                     if (brickIndex > 0)
                     {
-                        frontBrick = Instantiate(brickPrefab, frontBrick.transform.position + new Vector3(0, brickPrefab.transform.localScale.y, brickPrefab.transform.localScale.z), Quaternion.LookRotation(Vector3.forward));
+                        frontBrick = Instantiate(stairPrefab, frontBrick.transform.position + new Vector3(0, stairPrefab.transform.localScale.y, stairPrefab.transform.localScale.z), Quaternion.identity);
                         //frontBrick.transform.parent = playersFront.transform;
                         brickIndex--;
                         Destroy(bricks[brickIndex]);
@@ -191,6 +206,17 @@ public class PlayerController : MonoBehaviour
 
         } 
         //} 
+    }
+
+    void SplineMovement()
+    {
+        
+       var movement = transform.position ;
+       movement += new Vector3(0, 0, speed * Time.deltaTime);
+       _splineFollower.Move(0.1f);
+       rb.useGravity = false;
+       var _rotation = _splineFollower.rotationModifier;
+        
     }
  
 }
