@@ -24,6 +24,7 @@ public class CollisionHandler : MonoBehaviour
             renderer.material.color = Color.red;
             _playerController.HitTheObstacle(); 
             collision.transform.DOMove(transform.position + new Vector3(0f, 5f, -4f), 0.6f);
+            _playerController._splineFollower.Move(0.1f);
             //_playerController.transform.position += new Vector3(0f, 3f, -3f);
             // bu kýsým y,-z doðrultusunda geri sektiriyor. tuðlasý var ise devam koþulu koyulacak.
             //
