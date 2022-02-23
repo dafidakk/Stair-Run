@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour
         if (started)
         {
             //transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, 0, speed), Time.deltaTime*2);
-            transform.position += new Vector3(0, 0, speed * Time.deltaTime);
+            //transform.position += new Vector3(0, 0, speed * Time.deltaTime);
             //rb.velocity += new Vector3(0, 0, speed);
             animator.SetBool("started", true);
             _splineFollower.Move(0.1f);
@@ -85,11 +85,11 @@ public class PlayerController : MonoBehaviour
                 if (brickIndex > 0)
                 {
                     //transform.Translate(new Vector3(0, Time.deltaTime*speed, speed * Time.deltaTime));
-                    transform.position += new Vector3(0, speedY * Time.deltaTime , speedZ * Time.deltaTime);
+                    transform.position += new Vector3(0, speedY * Time.deltaTime , 0);
                 }
                 else
                 {
-                    transform.position += new Vector3(0, -speedY * Time.deltaTime, speedZ * Time.deltaTime);
+                    transform.position += new Vector3(0, -speedY * Time.deltaTime, 0);
                 }
             }
             else 
@@ -203,7 +203,7 @@ public class PlayerController : MonoBehaviour
                 }
 
             }
-            yield return new WaitForSeconds(0.125f);
+            yield return new WaitForSeconds(0.09f);
         } 
         //} 
     }
