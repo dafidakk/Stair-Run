@@ -57,6 +57,8 @@ public class PlayerController : MonoBehaviour
         }
 
         eulerAngY = transform.localEulerAngles.y;
+
+        
     }
     private void FixedUpdate()
     {
@@ -73,6 +75,7 @@ public class PlayerController : MonoBehaviour
             //transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, 0, speed), Time.deltaTime*2);
             //transform.position += new Vector3(0, 0, speed * Time.deltaTime);
             //rb.velocity += new Vector3(0, 0, speed);
+            GameManager.instance.StartGame();
             animator.SetBool("started", true);
             _splineFollower.Move(0.1f);
 
@@ -98,6 +101,7 @@ public class PlayerController : MonoBehaviour
                 isMouseDown = false;
                 frontBrick = null;
                 transform.position += new Vector3(0, -speed * Time.deltaTime, speed * Time.deltaTime);
+                GameManager.instance.GameOver();
             } 
         }
     }
