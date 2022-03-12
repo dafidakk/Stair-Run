@@ -4,15 +4,12 @@ using UnityEngine;
 using DG.Tweening;
 
 public class CollisionHandler : MonoBehaviour
-{
-    PlayerController player;
-
-    private Renderer _renderer;
+{  
     private PlayerController _playerController;
 
     private void Start()
     {
-        _playerController = FindObjectOfType<PlayerController>();
+        _playerController = PlayerController.instance;
         DOTween.Init();
     }
 

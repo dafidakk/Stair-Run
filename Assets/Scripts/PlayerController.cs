@@ -5,6 +5,7 @@ using Dreamteck.Splines;
 
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController instance;
     [SerializeField] public float speed = 1.5f;
     [SerializeField] public float speedY = 1.5f;
     [SerializeField] public float speedZ = 1.5f;
@@ -17,6 +18,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool _isSpline = false;
 
     private GameObject frontBrick;
+    private bool gameOver;
     public SplineFollower _splineFollower;
 
     public SplineComputer _splineComputer;
@@ -34,6 +36,13 @@ public class PlayerController : MonoBehaviour
     Rigidbody rb;
     private float eulerAngY;
 
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+    }
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -41,6 +50,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(BackToFront());
         _splineFollower = GetComponent<SplineFollower>();
         _splineComputer = GetComponent<SplineComputer>();
+        gameOver = false;
     }
     void Update()
     {
@@ -57,7 +67,10 @@ public class PlayerController : MonoBehaviour
         }
 
         eulerAngY = transform.localEulerAngles.y;
-
+        if (gameOver)
+        {
+            GameManager.instance.GameOver();
+        }
         
     }
     private void FixedUpdate()
@@ -79,7 +92,7 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("started", true);
             _splineFollower.Move(0.1f);
 
-            Debug.Log(eulerAngY);
+            //Debug.Log(eulerAngY);
             if (Input.GetMouseButton(0))
             {
                 isMouseDown = true;
@@ -101,7 +114,11 @@ public class PlayerController : MonoBehaviour
                 isMouseDown = false;
                 frontBrick = null;
                 transform.position += new Vector3(0, -speed * Time.deltaTime, speed * Time.deltaTime);
-                GameManager.instance.GameOver();
+                if (brickIndex <= 0)
+                {
+                    
+                }
+                
             } 
         }
     }
@@ -168,11 +185,9 @@ public class PlayerController : MonoBehaviour
 
                         else
                         {
-                            frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(0, stairPrefab.transform.localScale.y, stairPrefab.transform.localScale.z), Quaternion.LookRotation(transform.forward));
+                            frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(0, stairPrefab.transform.localScale.y, stairPrefab.transform.localScale.z), Quaternion.Euler(0, eulerAngY, 0));
                             //frontBrick.transform.parent = playersFront.transform;
-                        }
-
-
+                        } 
                         brickIndex--;
                         Destroy(bricks[brickIndex]);
                     }
@@ -191,7 +206,7 @@ public class PlayerController : MonoBehaviour
                         }
                         else
                         {
-                            frontBrick = Instantiate(stairPrefab, frontBrick.transform.position + new Vector3(0, stairPrefab.transform.localScale.y, stairPrefab.transform.localScale.z), Quaternion.LookRotation(transform.forward));
+                            frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(0, stairPrefab.transform.localScale.y, stairPrefab.transform.localScale.z), Quaternion.Euler(0, eulerAngY, 0));
                         }
                        
                         //frontBrick.transform.parent = playersFront.transform;
@@ -200,22 +215,26 @@ public class PlayerController : MonoBehaviour
                     }
                     else
                     {
-                        rb.useGravity = true;
+                        
                         isMouseDown = false;
                         frontBrick = null;
+                        gameOver = true;
+                        started = false;
+                        animator.SetBool("started", false);
+                        rb.useGravity = true;
                     }
                 }
 
             }
-            yield return new WaitForSeconds(0.09f);
+            yield return new WaitForSeconds(0.06f);
         } 
         //} 
     }
-    void SplineMovement()
-    {
-       transform.position += new Vector3(0, 0, speed * Time.deltaTime);
-       _splineFollower.Move(0.1f);
-       rb.useGravity = false;
-    }
+    //void SplineMovement()
+    //{
+    //   transform.position += new Vector3(0, 0, speed * Time.deltaTime);
+    //   _splineFollower.Move(0.1f);
+    //   rb.useGravity = false;
+    //}
  
 }

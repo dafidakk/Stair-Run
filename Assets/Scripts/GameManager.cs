@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     public bool gameOver;
+    private bool started = false; 
 
     private void Awake()
     {
@@ -14,28 +15,44 @@ public class GameManager : MonoBehaviour
             instance = this;
 
         }
-    }
-    // Start is called before the first frame update
+    } 
     void Start()
     {
         gameOver = false;
-    }
-
-    // Update is called once per frame
+    } 
     void Update()
     {
-        
+        TabToStart();
+    } 
+    private void FixedUpdate()
+    {
+        if (started)
+        {
+            StartGame(); 
+        }
     }
 
     public void StartGame()
     {
-        UiManager.instance.GameStart();
-        ScoreManager.instance.startScore();
+        if (started)
+        {
+            UiManager.instance.GameStart();
+            ScoreManager.instance.startScore();
+        }
+       
     }
     public void GameOver()
     {
         UiManager.instance.GameOver();
         ScoreManager.instance.stopScore();
+        gameOver = true;
 
+    }
+    void TabToStart()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            started = true;
+        }
     }
 }
