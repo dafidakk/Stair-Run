@@ -19,10 +19,8 @@ public class PlayerController : MonoBehaviour
 
     private GameObject frontBrick;
     private bool gameOver;
-    public SplineFollower _splineFollower;
-
-    public SplineComputer _splineComputer;
-
+    public SplineFollower _splineFollower; 
+    public SplineComputer _splineComputer; 
     private GameObject[] bricks = new GameObject[9999];
     private int brickIndex = 0;
     private int brickSpace = 0;
@@ -35,7 +33,7 @@ public class PlayerController : MonoBehaviour
     float sizeY;
     Rigidbody rb;
     private float eulerAngY;
-
+    private bool _isFinish;
     private void Awake()
     {
         if (instance == null)
@@ -51,6 +49,7 @@ public class PlayerController : MonoBehaviour
         _splineFollower = GetComponent<SplineFollower>();
         _splineComputer = GetComponent<SplineComputer>();
         gameOver = false;
+        _isFinish = false;
     }
     void Update()
     {
@@ -100,7 +99,6 @@ public class PlayerController : MonoBehaviour
 
                 if (brickIndex > 0)
                 {
-                    //transform.Translate(new Vector3(0, Time.deltaTime*speed, speed * Time.deltaTime));
                     transform.position += new Vector3(0, speedY * Time.deltaTime , 0);
                 }
                 else
@@ -110,15 +108,25 @@ public class PlayerController : MonoBehaviour
             }
             else 
             {
-                rb.useGravity = true;
-                isMouseDown = false;
-                frontBrick = null;
-                transform.position += new Vector3(0, -speed * Time.deltaTime, speed * Time.deltaTime);
-                if (brickIndex <= 0)
+                if (FinishTrigger.instance.isFinish == true)
                 {
-                    
+                    if (brickIndex > 0)
+                    {
+                        transform.position += new Vector3(0, speedY * Time.deltaTime, 0);
+                    }
+                    else
+                    {
+                        transform.position += new Vector3(0, -speedY * Time.deltaTime, 0);
+                    }
                 }
-                
+                else
+                {
+                    rb.useGravity = true;
+                    isMouseDown = false;
+                    frontBrick = null;
+                    transform.position += new Vector3(0, -speed * Time.deltaTime, speed * Time.deltaTime);
+                }
+                              
             } 
         }
     }
@@ -229,6 +237,14 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForSeconds(0.06f);
         } 
         //} 
+    }
+
+    void CheckFinishLine()
+    {
+        if (FinishTrigger.instance.isFinish == true)
+        {
+            _isFinish = true;
+        }
     }
     //void SplineMovement()
     //{

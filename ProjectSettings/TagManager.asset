@@ -9,6 +9,7 @@ TagManager:
   - BricksOnPlayer
   - Back
   - Front
+  - FinishStart
   layers:
   - Default
   - TransparentFX
