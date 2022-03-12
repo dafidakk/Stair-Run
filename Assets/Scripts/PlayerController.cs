@@ -10,13 +10,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public float speedY = 1.5f;
     [SerializeField] public float speedZ = 1.5f;
     [SerializeField] private GameObject playersBack;
-    [SerializeField] private GameObject playersFront;
-    private GameObject brick;
+    [SerializeField] private GameObject playersFront; 
     [SerializeField] private GameObject brickPrefab;
     [SerializeField] private GameObject stairPrefab;
     [SerializeField] private Animator animator;
     [SerializeField] private bool _isSpline = false;
-
+    private GameObject brick;
     private GameObject frontBrick;
     private bool gameOver;
     public SplineFollower _splineFollower; 
@@ -32,8 +31,7 @@ public class PlayerController : MonoBehaviour
     float sizeZ;
     float sizeY;
     Rigidbody rb;
-    private float eulerAngY;
-    private bool _isFinish;
+    private float eulerAngY; 
     private void Awake()
     {
         if (instance == null)
@@ -48,8 +46,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(BackToFront());
         _splineFollower = GetComponent<SplineFollower>();
         _splineComputer = GetComponent<SplineComputer>();
-        gameOver = false;
-        _isFinish = false;
+        gameOver = false; 
     }
     void Update()
     {
@@ -60,6 +57,7 @@ public class PlayerController : MonoBehaviour
         frontPos = playersFront.transform.position;
         sizeZ = brickPrefab.transform.localScale.z;
         sizeY = brickPrefab.transform.localScale.y;
+
         for (int i = 0; i < brickIndex; i++)
         {
             bricks[i].transform.position = playersBack.transform.position + new Vector3(0, sizeY * i, 0);
@@ -70,23 +68,18 @@ public class PlayerController : MonoBehaviour
         {
             GameManager.instance.GameOver();
         }
-        
     }
     private void FixedUpdate()
     {
         if (started)
         {
-            Movement();
-
+            Movement(); 
         }
     }
     void Movement()
     { 
         if (started)
         {
-            //transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3(0, 0, speed), Time.deltaTime*2);
-            //transform.position += new Vector3(0, 0, speed * Time.deltaTime);
-            //rb.velocity += new Vector3(0, 0, speed);
             GameManager.instance.StartGame();
             animator.SetBool("started", true);
             _splineFollower.Move(0.1f);
@@ -110,9 +103,21 @@ public class PlayerController : MonoBehaviour
             {
                 if (FinishTrigger.instance.isFinish == true)
                 {
+                    
                     if (brickIndex > 0)
                     {
+                        isMouseDown = true;
                         transform.position += new Vector3(0, speedY * Time.deltaTime, 0);
+                        if (LevelEnd.instance.levelEnd)
+                        {
+                            isMouseDown = false;
+                            frontBrick = null;
+                            gameOver = true;
+                            started = false;
+                            animator.SetBool("started", false);
+                            rb.useGravity = true;
+
+                        }
                     }
                     else
                     {
@@ -136,24 +141,20 @@ public class PlayerController : MonoBehaviour
         {
             started = true;
         }
-    }
-
+    } 
     public void HitTheObstacle()
     {
         started = false;   
-    }
-
+    }  
     public void AfterHitTheObstacle()
     {
         started = true;
         gameObject.GetComponent<Renderer>().material.SetColor("_Color", Color.blue);
-    }
-
+    } 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Bricks")
-        {
-            
+        { 
             Vector3 positionVector = new Vector3();
             positionVector = lasPos;
             sizeY = other.transform.localScale.y;
@@ -164,11 +165,9 @@ public class PlayerController : MonoBehaviour
 
             bricks[brickIndex]= other.gameObject;
             brickIndex++;
-            Debug.Log(brickIndex);
-     
+            Debug.Log(brickIndex); 
         }
     }
-
     void turn15Degree()
     {
         transform.localRotation *= Quaternion.Euler(0, -15, 0);
@@ -177,24 +176,19 @@ public class PlayerController : MonoBehaviour
     {
         while (true)
         {
-            //foreach (GameObject item in bricks)
-            //{
             if (isMouseDown)
             { 
                 if (frontBrick == null)
                 {
-
                     if (brickIndex > 0)
                     {
                         if (eulerAngY > 260f)
                         { 
                             frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(stairPrefab.transform.localScale.z, stairPrefab.transform.localScale.y, 0), Quaternion.Euler(0,eulerAngY,0));
-                        }
-
+                        } 
                         else
                         {
-                            frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(0, stairPrefab.transform.localScale.y, stairPrefab.transform.localScale.z), Quaternion.Euler(0, eulerAngY, 0));
-                            //frontBrick.transform.parent = playersFront.transform;
+                            frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(0, stairPrefab.transform.localScale.y, stairPrefab.transform.localScale.z), Quaternion.Euler(0, eulerAngY, 0)); 
                         } 
                         brickIndex--;
                         Destroy(bricks[brickIndex]);
@@ -215,15 +209,12 @@ public class PlayerController : MonoBehaviour
                         else
                         {
                             frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(0, stairPrefab.transform.localScale.y, stairPrefab.transform.localScale.z), Quaternion.Euler(0, eulerAngY, 0));
-                        }
-                       
-                        //frontBrick.transform.parent = playersFront.transform;
+                        } 
                         brickIndex--;
                         Destroy(bricks[brickIndex]);
                     }
                     else
-                    {
-                        
+                    { 
                         isMouseDown = false;
                         frontBrick = null;
                         gameOver = true;
@@ -232,25 +223,10 @@ public class PlayerController : MonoBehaviour
                         rb.useGravity = true;
                     }
                 }
-
             }
             yield return new WaitForSeconds(0.06f);
         } 
         //} 
     }
-
-    void CheckFinishLine()
-    {
-        if (FinishTrigger.instance.isFinish == true)
-        {
-            _isFinish = true;
-        }
-    }
-    //void SplineMovement()
-    //{
-    //   transform.position += new Vector3(0, 0, speed * Time.deltaTime);
-    //   _splineFollower.Move(0.1f);
-    //   rb.useGravity = false;
-    //}
  
 }
