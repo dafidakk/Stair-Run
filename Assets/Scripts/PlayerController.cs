@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Dreamteck.Splines;
+using System.Linq;
 
 public class PlayerController : MonoBehaviour
 {
@@ -20,9 +21,8 @@ public class PlayerController : MonoBehaviour
     private bool gameOver;
     public SplineFollower _splineFollower; 
     public SplineComputer _splineComputer; 
-    private GameObject[] bricks = new GameObject[9999];
-    private int brickIndex = 0;
-    private int brickSpace = 0;
+    private List<GameObject> bricks;
+    private int _brickSpace = 0;
     //Vector3 newVelocity = new Vector3();
     private bool started = false;
     private bool isMouseDown = false;
@@ -38,6 +38,8 @@ public class PlayerController : MonoBehaviour
         {
             instance = this;
         }
+
+        bricks = new List<GameObject>();
     }
     void Start()
     {
@@ -50,6 +52,7 @@ public class PlayerController : MonoBehaviour
     }
     void Update()
     {
+
         TabToStart();
         rb.useGravity = true;
 
@@ -58,10 +61,28 @@ public class PlayerController : MonoBehaviour
         sizeZ = brickPrefab.transform.localScale.z;
         sizeY = brickPrefab.transform.localScale.y;
 
-        for (int i = 0; i < brickIndex; i++)
+        bricks = bricks.Where(x => x.gameObject != null).ToList();
+
+        for (int i = 0; i < bricks.Count; i++)
         {
+          
+          
+            if (bricks[i] == null)
+            {
+                Debug.Log("");
+
+                bricks.Remove(bricks[i]);
+              
+
+            }
             bricks[i].transform.position = playersBack.transform.position + new Vector3(0, sizeY * i, 0);
+
         }
+
+        //foreach (var item in bricks)
+        //{
+        //    item.transform.position = playersBack.transform.position + new Vector3(0, sizeY , 0);
+        //}
 
         eulerAngY = transform.localEulerAngles.y;
         if (gameOver)
@@ -90,7 +111,7 @@ public class PlayerController : MonoBehaviour
                 isMouseDown = true;
                 rb.useGravity = false;
 
-                if (brickIndex > 0)
+                if (bricks.Count > 0)
                 {
                     transform.position += new Vector3(0, speedY * Time.deltaTime , 0);
                 }
@@ -104,7 +125,7 @@ public class PlayerController : MonoBehaviour
                 if (FinishTrigger.instance.isFinish == true)
                 {
                     
-                    if (brickIndex > 0)
+                    if (bricks.Count > 0)
                     {
                         isMouseDown = true;
                         transform.position += new Vector3(0, speedY * Time.deltaTime, 0);
@@ -154,20 +175,24 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Bricks")
-        { 
-            Vector3 positionVector = new Vector3();
-            positionVector = lasPos;
-            sizeY = other.transform.localScale.y;
+        {
             other.transform.parent = playersBack.transform;
-            other.transform.localPosition = positionVector + new Vector3(0, sizeY, 0);
-            other.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
-            other.transform.localScale = new Vector3(0.5f, 0.125f, 0.6f);
-
-            bricks[brickIndex]= other.gameObject;
-            brickIndex++;
-            Debug.Log(brickIndex); 
+            ReLocate(other); 
+            bricks.Add(other.gameObject);
+            //Debug.Log(bricks.Count); 
         }
     }
+
+    private void ReLocate(Collider other)
+    {
+        var positionVector = lasPos;
+        sizeY = other.transform.localScale.y;
+        other.transform.localPosition = positionVector + new Vector3(0, sizeY * _brickSpace, 0);
+        other.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
+        other.transform.localScale = new Vector3(0.5f, 0.125f, 0.6f);
+        _brickSpace++;
+    }
+
     void turn15Degree()
     {
         transform.localRotation *= Quaternion.Euler(0, -15, 0);
@@ -180,7 +205,7 @@ public class PlayerController : MonoBehaviour
             { 
                 if (frontBrick == null)
                 {
-                    if (brickIndex > 0)
+                    if (bricks.Count > 0)
                     {
                         if (eulerAngY > 260f)
                         { 
@@ -189,9 +214,10 @@ public class PlayerController : MonoBehaviour
                         else
                         {
                             frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(0, stairPrefab.transform.localScale.y, stairPrefab.transform.localScale.z), Quaternion.Euler(0, eulerAngY, 0)); 
-                        } 
-                        brickIndex--;
-                        Destroy(bricks[brickIndex]);
+                        }  
+                        var gameObject = bricks[bricks.Count-1];
+                        bricks.Remove(gameObject);
+                        Destroy(gameObject);
                     }
                     else
                     {
@@ -200,7 +226,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    if (brickIndex > 0)
+                    if (bricks.Count > 0)
                     {
                         if (eulerAngY > 260f)
                         {
@@ -209,9 +235,10 @@ public class PlayerController : MonoBehaviour
                         else
                         {
                             frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(0, stairPrefab.transform.localScale.y, stairPrefab.transform.localScale.z), Quaternion.Euler(0, eulerAngY, 0));
-                        } 
-                        brickIndex--;
-                        Destroy(bricks[brickIndex]);
+                        }  
+                        var gameObject = bricks[bricks.Count-1];
+                        bricks.Remove(gameObject);
+                        Destroy(gameObject);
                     }
                     else
                     { 
