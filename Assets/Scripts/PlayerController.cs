@@ -20,7 +20,8 @@ public class PlayerController : MonoBehaviour
     private GameObject frontBrick;
     private bool gameOver;
     public SplineFollower _splineFollower; 
-    public SplineComputer _splineComputer; 
+    public SplineComputer _splineComputer;
+    public SplineProjector splineProjector;
     private List<GameObject> bricks;
     private int _brickSpace = 0;
     //Vector3 newVelocity = new Vector3();
@@ -28,6 +29,7 @@ public class PlayerController : MonoBehaviour
     private bool isMouseDown = false;
     Vector3 lasPos;
     Vector3 frontPos;
+    public float followSpeed = 250f;
     float sizeZ;
     float sizeY;
     Rigidbody rb;
@@ -48,6 +50,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(BackToFront());
         _splineFollower = GetComponent<SplineFollower>();
         _splineComputer = GetComponent<SplineComputer>();
+        splineProjector = GetComponent<SplineProjector>();
         gameOver = false; 
     }
     void Update()
@@ -89,6 +92,11 @@ public class PlayerController : MonoBehaviour
         {
             GameManager.instance.GameOver();
         }
+        //int index;
+        //double lerp;
+        //_playerController._splineComputer.GetSamplingValues(_playerController._splineFollower.result.percent, out index, out lerp);
+        //_playerController._splineFollower.GetSample(index, _playerController.sample);
+        //Debug.Log($"Forward: {_playerController.sample.forward}");
     }
     private void FixedUpdate()
     {
@@ -103,7 +111,8 @@ public class PlayerController : MonoBehaviour
         {
             GameManager.instance.StartGame();
             animator.SetBool("started", true);
-            _splineFollower.Move(0.1f);
+            _splineFollower.follow = true;
+            _splineFollower.followSpeed = followSpeed * Time.fixedDeltaTime;
 
             //Debug.Log(eulerAngY);
             if (Input.GetMouseButton(0))
@@ -137,6 +146,7 @@ public class PlayerController : MonoBehaviour
                             started = false;
                             animator.SetBool("started", false);
                             rb.useGravity = true;
+                            _splineFollower.follow = false;
 
                         }
                     }
@@ -169,7 +179,8 @@ public class PlayerController : MonoBehaviour
     }  
     public void AfterHitTheObstacle()
     {
-        started = true;
+        _splineFollower.follow = false;
+        //started = true;
         gameObject.GetComponent<Renderer>().material.SetColor("_Color", Color.blue);
     } 
     private void OnTriggerEnter(Collider other)
@@ -248,6 +259,7 @@ public class PlayerController : MonoBehaviour
                         started = false;
                         animator.SetBool("started", false);
                         rb.useGravity = true;
+                        _splineFollower.follow = false;
                     }
                 }
             }
