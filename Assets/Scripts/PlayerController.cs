@@ -15,17 +15,20 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject brickPrefab;
     [SerializeField] private GameObject stairPrefab;
     [SerializeField] private Animator animator;
-    [SerializeField] private bool _isSpline = false;
+    //[SerializeField] private bool _isSpline = false;
+    private CollisionHandler _collisionHandler;
     private GameObject brick;
     private GameObject frontBrick;
     private bool gameOver;
     public SplineFollower _splineFollower; 
     public SplineComputer _splineComputer;
+    public SplineSample sample = new SplineSample();
     public SplineProjector splineProjector;
-    private List<GameObject> bricks;
+    public List<GameObject> bricks;
+    public float eval; 
     private int _brickSpace = 0;
     //Vector3 newVelocity = new Vector3();
-    private bool started = false;
+    public bool started = false;
     private bool isMouseDown = false;
     Vector3 lasPos;
     Vector3 frontPos;
@@ -50,6 +53,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(BackToFront());
         _splineFollower = GetComponent<SplineFollower>();
         _splineComputer = GetComponent<SplineComputer>();
+        
         splineProjector = GetComponent<SplineProjector>();
         gameOver = false; 
     }
@@ -63,7 +67,7 @@ public class PlayerController : MonoBehaviour
         frontPos = playersFront.transform.position;
         sizeZ = brickPrefab.transform.localScale.z;
         sizeY = brickPrefab.transform.localScale.y;
-
+        
         bricks = bricks.Where(x => x.gameObject != null).ToList();
 
         for (int i = 0; i < bricks.Count; i++)
@@ -92,11 +96,11 @@ public class PlayerController : MonoBehaviour
         {
             GameManager.instance.GameOver();
         }
-        //int index;
-        //double lerp;
-        //_playerController._splineComputer.GetSamplingValues(_playerController._splineFollower.result.percent, out index, out lerp);
-        //_playerController._splineFollower.GetSample(index, _playerController.sample);
-        //Debug.Log($"Forward: {_playerController.sample.forward}");
+
+
+        splineProjector.Project(gameObject.transform.position, sample);
+        Debug.Log($"up: {sample.rotation.eulerAngles.y}");
+
     }
     private void FixedUpdate()
     {
@@ -198,7 +202,7 @@ public class PlayerController : MonoBehaviour
     {
         var positionVector = lasPos;
         sizeY = other.transform.localScale.y;
-        other.transform.localPosition = positionVector + new Vector3(0, sizeY * _brickSpace, 0);
+        other.transform.localPosition = positionVector + new Vector3(0, sizeY, 0);
         other.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
         other.transform.localScale = new Vector3(0.5f, 0.125f, 0.6f);
         _brickSpace++;

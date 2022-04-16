@@ -10,6 +10,8 @@ public class CollisionHandler : MonoBehaviour
     public double percentage;
     private float length;
     double distance;
+    double eval;
+    private bool gameOver;
 
     private void Start()
     {
@@ -17,12 +19,15 @@ public class CollisionHandler : MonoBehaviour
         DOTween.Init();
     } 
     private void Update()
-    { 
-        Debug.Log(_playerController.splineProjector.result.percent);
-        percentage = _playerController.splineProjector.result.percent;
-        distance = _playerController._splineFollower.Travel(1-percentage,transform.position.x,Spline.Direction.Forward);
-        length = _playerController._splineFollower.CalculateLength(distance);
-       // Debug.Log(length); 
+    {
+        percentage = _playerController.splineProjector.result.percent; 
+        eval = _playerController.splineProjector.Evaluate(percentage).percent;
+        //Debug.Log(_playerController.splineProjector.result.percent);
+        //length = _playerController._splineFollower.CalculateLength(distance);
+        if (gameOver)
+        {
+            GameManager.instance.GameOver();
+        }
     } 
     private void OnCollisionEnter(Collision collision)
     {
@@ -31,23 +36,34 @@ public class CollisionHandler : MonoBehaviour
             var renderer = _playerController.GetComponent<Renderer>();
             var playerAngle = _playerController.transform.localEulerAngles.y;
             renderer.material.color = Color.red;
+
             _playerController.HitTheObstacle();
+
+            _playerController._splineFollower.follow = false;
+
             if (playerAngle > 260f)
             {
                 collision.transform.DOMove(transform.position + new Vector3(4f, 5f, 0), 0.6f);
-                _playerController._splineFollower.follow = false;
             }
             else
             {
                 collision.transform.DOMove(transform.position + new Vector3(0f, 5f, -4f), 0.6f);
-                _playerController._splineFollower.follow = false;
             }
-            //_playerController.AfterHitTheObstacle();  
-            _playerController._splineFollower.SetDistance(length);
+            
+            distance = _playerController._splineFollower.Travel(eval, _playerController.gameObject.transform.position.x, Spline.Direction.Forward);
+            _playerController._splineFollower.SetPercent(distance);
+
             _playerController._splineFollower.follow = true;
-            _playerController.followSpeed = 250f;
 
-
+            if (_playerController.bricks.Count > 0)
+            {
+               _playerController.started = true;
+            }
+            else
+            {
+                gameOver = true;
+                _playerController.started = false;
+            }
         }
     }
 
