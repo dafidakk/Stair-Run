@@ -15,9 +15,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject brickPrefab;
     [SerializeField] private GameObject stairPrefab;
     [SerializeField] private Animator animator;
-    //[SerializeField] private bool _isSpline = false;
-    private CollisionHandler _collisionHandler;
-    private GameObject brick;
     private GameObject frontBrick;
     private bool gameOver;
     public SplineFollower _splineFollower; 
@@ -26,24 +23,22 @@ public class PlayerController : MonoBehaviour
     public SplineProjector splineProjector;
     public List<GameObject> bricks;
     public float eval; 
-    private int _brickSpace = 0;
-    //Vector3 newVelocity = new Vector3();
     public bool started = false;
     private bool isMouseDown = false;
     Vector3 lasPos;
     Vector3 frontPos;
     public float followSpeed = 250f;
-    float sizeZ;
     float sizeY;
     Rigidbody rb;
-    private float eulerAngY; 
+    private float eulerAngY;
+
+    private bool _nowDestroy = false;
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
         }
-
         bricks = new List<GameObject>();
     }
     void Start()
@@ -53,60 +48,61 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(BackToFront());
         _splineFollower = GetComponent<SplineFollower>();
         _splineComputer = GetComponent<SplineComputer>();
-        
         splineProjector = GetComponent<SplineProjector>();
         gameOver = false; 
     }
+
+    
     void Update()
     {
-
         TabToStart();
         rb.useGravity = true;
-
         lasPos = playersBack.transform.localPosition;
         frontPos = playersFront.transform.position;
-        sizeZ = brickPrefab.transform.localScale.z;
         sizeY = brickPrefab.transform.localScale.y;
-        
-        bricks = bricks.Where(x => x.gameObject != null).ToList();
 
-        for (int i = 0; i < bricks.Count; i++)
-        {
-          
-          
-            if (bricks[i] == null)
-            {
-                Debug.Log("");
+        // bricks = bricks.Where(x => x.gameObject != null).ToList();
 
-                bricks.Remove(bricks[i]);
-              
-
-            }
-            bricks[i].transform.position = playersBack.transform.position + new Vector3(0, sizeY * i, 0);
-
-        }
-
-        //foreach (var item in bricks)
+        //for (int i = 0; i < bricks.Count; i++)
         //{
-        //    item.transform.position = playersBack.transform.position + new Vector3(0, sizeY , 0);
+        //    if (bricks[i] == null)
+        //    {
+        //        Debug.Log("");
+        //        bricks.Remove(bricks[i]);
+        //    }
+        //    bricks[i].transform.position = playersBack.transform.position + new Vector3(0, sizeY * i, 0);
         //}
+        if (started)
+        {
+            Movement();
+        }
 
         eulerAngY = transform.localEulerAngles.y;
         if (gameOver)
         {
             GameManager.instance.GameOver();
         }
+        Debug.Log($"Forward : {sample.forward}");
 
+        //transform.forward = sample.forward;
 
-        splineProjector.Project(gameObject.transform.position, sample);
-        Debug.Log($"up: {sample.rotation.eulerAngles.y}");
+    }
+    private void LateUpdate()
+    {
+        _nowDestroy = true;
 
+        
     }
     private void FixedUpdate()
     {
-        if (started)
+        for (int i = 0; i < bricks.Count; i++)
         {
-            Movement(); 
+            if (bricks[i] == null)
+            {
+                Debug.Log("");
+
+            }
+            bricks[i].transform.position = playersBack.transform.position + new Vector3(0, sizeY * i, 0);
         }
     }
     void Movement()
@@ -118,7 +114,6 @@ public class PlayerController : MonoBehaviour
             _splineFollower.follow = true;
             _splineFollower.followSpeed = followSpeed * Time.fixedDeltaTime;
 
-            //Debug.Log(eulerAngY);
             if (Input.GetMouseButton(0))
             {
                 isMouseDown = true;
@@ -184,7 +179,6 @@ public class PlayerController : MonoBehaviour
     public void AfterHitTheObstacle()
     {
         _splineFollower.follow = false;
-        //started = true;
         gameObject.GetComponent<Renderer>().material.SetColor("_Color", Color.blue);
     } 
     private void OnTriggerEnter(Collider other)
@@ -205,13 +199,8 @@ public class PlayerController : MonoBehaviour
         other.transform.localPosition = positionVector + new Vector3(0, sizeY, 0);
         other.transform.rotation = Quaternion.AngleAxis(90, Vector3.up);
         other.transform.localScale = new Vector3(0.5f, 0.125f, 0.6f);
-        _brickSpace++;
     }
 
-    void turn15Degree()
-    {
-        transform.localRotation *= Quaternion.Euler(0, -15, 0);
-    }
     IEnumerator BackToFront()
     {
         while (true)
@@ -223,16 +212,17 @@ public class PlayerController : MonoBehaviour
                     if (bricks.Count > 0)
                     {
                         if (eulerAngY > 260f)
-                        { 
-                            frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(stairPrefab.transform.localScale.z, stairPrefab.transform.localScale.y, 0), Quaternion.Euler(0,eulerAngY,0));
-                        } 
+                        {
+                            frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(stairPrefab.transform.localScale.z, stairPrefab.transform.localScale.y, 0), Quaternion.Euler(0, eulerAngY, 0));
+                        }
                         else
                         {
-                            frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(0, stairPrefab.transform.localScale.y, stairPrefab.transform.localScale.z), Quaternion.Euler(0, eulerAngY, 0)); 
-                        }  
-                        var gameObject = bricks[bricks.Count-1];
-                        bricks.Remove(gameObject);
-                        Destroy(gameObject);
+                            frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(0, stairPrefab.transform.localScale.y, stairPrefab.transform.localScale.z), Quaternion.Euler(0, eulerAngY, 0));
+                        }
+                        if (_nowDestroy)
+                        {
+                            NowDestroy();
+                        }
                     }
                     else
                     {
@@ -250,10 +240,11 @@ public class PlayerController : MonoBehaviour
                         else
                         {
                             frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(0, stairPrefab.transform.localScale.y, stairPrefab.transform.localScale.z), Quaternion.Euler(0, eulerAngY, 0));
-                        }  
-                        var gameObject = bricks[bricks.Count-1];
-                        bricks.Remove(gameObject);
-                        Destroy(gameObject);
+                        }
+                        if (_nowDestroy)
+                        {
+                            NowDestroy();
+                        }
                     }
                     else
                     { 
@@ -271,5 +262,11 @@ public class PlayerController : MonoBehaviour
         } 
         //} 
     }
- 
+
+    private void NowDestroy()
+    { 
+        var gameObject = bricks[bricks.Count - 1];
+        bricks.Remove(gameObject);
+        Destroy(gameObject);
+    }
 }

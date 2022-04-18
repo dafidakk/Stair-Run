@@ -20,10 +20,6 @@ public class CollisionHandler : MonoBehaviour
     } 
     private void Update()
     {
-        percentage = _playerController.splineProjector.result.percent; 
-        eval = _playerController.splineProjector.Evaluate(percentage).percent;
-        //Debug.Log(_playerController.splineProjector.result.percent);
-        //length = _playerController._splineFollower.CalculateLength(distance);
         if (gameOver)
         {
             GameManager.instance.GameOver();
@@ -38,21 +34,20 @@ public class CollisionHandler : MonoBehaviour
             renderer.material.color = Color.red;
 
             _playerController.HitTheObstacle();
-
             _playerController._splineFollower.follow = false;
-
             if (playerAngle > 260f)
             {
                 collision.transform.DOMove(transform.position + new Vector3(4f, 5f, 0), 0.6f);
             }
             else
             {
-                collision.transform.DOMove(transform.position + new Vector3(0f, 5f, -4f), 0.6f);
-            }
-            
-            distance = _playerController._splineFollower.Travel(eval, _playerController.gameObject.transform.position.x, Spline.Direction.Forward);
-            _playerController._splineFollower.SetPercent(distance);
-
+                collision.transform.DOMove(transform.position + new Vector3(0f, 5f, -4f), 0.6f).OnComplete(()=> {
+                    percentage = _playerController.splineProjector.result.percent;
+                    eval = _playerController.splineProjector.Evaluate(percentage).percent;
+                    distance = _playerController._splineFollower.Travel(eval, _playerController.gameObject.transform.position.x, Spline.Direction.Forward);
+                    _playerController._splineFollower.SetPercent(distance);
+                });
+            } 
             _playerController._splineFollower.follow = true;
 
             if (_playerController.bricks.Count > 0)
