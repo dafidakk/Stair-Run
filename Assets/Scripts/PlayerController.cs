@@ -211,14 +211,9 @@ public class PlayerController : MonoBehaviour
                 {
                     if (bricks.Count > 0)
                     {
-                        if (eulerAngY > 260f)
-                        {
-                            frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(stairPrefab.transform.localScale.z, stairPrefab.transform.localScale.y, 0), Quaternion.Euler(0, eulerAngY, 0));
-                        }
-                        else
-                        {
-                            frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(0, stairPrefab.transform.localScale.y, stairPrefab.transform.localScale.z), Quaternion.Euler(0, eulerAngY, 0));
-                        }
+                        
+                        frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(stairPrefab.transform.localScale.z, stairPrefab.transform.localScale.y, 0), Quaternion.LookRotation(transform.forward));
+                        
                         if (_nowDestroy)
                         {
                             NowDestroy();
@@ -233,14 +228,8 @@ public class PlayerController : MonoBehaviour
                 {
                     if (bricks.Count > 0)
                     {
-                        if (eulerAngY > 260f)
-                        {
-                            frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(stairPrefab.transform.localScale.z, stairPrefab.transform.localScale.y, 0), Quaternion.Euler(0, eulerAngY, 0));
-                        }
-                        else
-                        {
-                            frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(0, stairPrefab.transform.localScale.y, stairPrefab.transform.localScale.z), Quaternion.Euler(0, eulerAngY, 0));
-                        }
+                        frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(stairPrefab.transform.localScale.z, stairPrefab.transform.localScale.y, 0), Quaternion.LookRotation(transform.forward));
+                        
                         if (_nowDestroy)
                         {
                             NowDestroy();

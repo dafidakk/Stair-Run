@@ -38,14 +38,18 @@ public class CollisionHandler : MonoBehaviour
             if (playerAngle > 260f)
             {
                 collision.transform.DOMove(transform.position + new Vector3(4f, 5f, 0), 0.6f);
+                percentage = _playerController.splineProjector.result.percent;
+                eval = _playerController.splineProjector.Evaluate(percentage).percent;
+                distance = _playerController._splineFollower.Travel(eval, _playerController.gameObject.transform.position.x, Spline.Direction.Forward);
+                _playerController._splineFollower.SetPercent(distance);
             }
             else
             {
                 collision.transform.DOMove(transform.position + new Vector3(0f, 5f, -4f), 0.6f).OnComplete(()=> {
-                    percentage = _playerController.splineProjector.result.percent;
-                    eval = _playerController.splineProjector.Evaluate(percentage).percent;
-                    distance = _playerController._splineFollower.Travel(eval, _playerController.gameObject.transform.position.x, Spline.Direction.Forward);
-                    _playerController._splineFollower.SetPercent(distance);
+                percentage = _playerController.splineProjector.result.percent;
+                eval = _playerController.splineProjector.Evaluate(percentage).percent;
+                distance = _playerController._splineFollower.Travel(eval, _playerController.gameObject.transform.position.x, Spline.Direction.Forward);
+                _playerController._splineFollower.SetPercent(distance);
                 });
             } 
             _playerController._splineFollower.follow = true;
