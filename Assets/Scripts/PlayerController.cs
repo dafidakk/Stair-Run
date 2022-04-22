@@ -11,18 +11,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public float speedY = 1.5f;
     [SerializeField] public float speedZ = 1.5f;
     [SerializeField] private GameObject playersBack;
-    [SerializeField] private GameObject playersFront; 
+    [SerializeField] private GameObject playersFront;
     [SerializeField] private GameObject brickPrefab;
     [SerializeField] private GameObject stairPrefab;
     [SerializeField] private Animator animator;
     private GameObject frontBrick;
     private bool gameOver;
-    public SplineFollower _splineFollower; 
+    public SplineFollower _splineFollower;
     public SplineComputer _splineComputer;
     public SplineSample sample = new SplineSample();
     public SplineProjector splineProjector;
     public List<GameObject> bricks;
-    public float eval; 
+    public float eval;
     public bool started = false;
     private bool isMouseDown = false;
     Vector3 lasPos;
@@ -44,15 +44,15 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        animator = GetComponentInChildren <Animator>();
+        animator = GetComponentInChildren<Animator>();
         StartCoroutine(BackToFront());
         _splineFollower = GetComponent<SplineFollower>();
         _splineComputer = GetComponent<SplineComputer>();
         splineProjector = GetComponent<SplineProjector>();
-        gameOver = false; 
+        gameOver = false;
     }
 
-    
+
     void Update()
     {
         TabToStart();
@@ -61,7 +61,7 @@ public class PlayerController : MonoBehaviour
         frontPos = playersFront.transform.position;
         sizeY = brickPrefab.transform.localScale.y;
 
-        // bricks = bricks.Where(x => x.gameObject != null).ToList();
+        bricks = bricks.Where(x => x.gameObject != null).ToList();
 
         //for (int i = 0; i < bricks.Count; i++)
         //{
@@ -89,24 +89,15 @@ public class PlayerController : MonoBehaviour
     }
     private void LateUpdate()
     {
-        _nowDestroy = true;
-
-        
-    }
-    private void FixedUpdate()
-    {
         for (int i = 0; i < bricks.Count; i++)
         {
-            if (bricks[i] == null)
-            {
-                Debug.Log("");
-
-            }
             bricks[i].transform.position = playersBack.transform.position + new Vector3(0, sizeY * i, 0);
         }
+
     }
+
     void Movement()
-    { 
+    {
         if (started)
         {
             GameManager.instance.StartGame();
@@ -121,18 +112,18 @@ public class PlayerController : MonoBehaviour
 
                 if (bricks.Count > 0)
                 {
-                    transform.position += new Vector3(0, speedY * Time.deltaTime , 0);
+                    transform.position += new Vector3(0, speedY * Time.deltaTime, 0);
                 }
                 else
                 {
                     transform.position += new Vector3(0, -speedY * Time.deltaTime, 0);
                 }
             }
-            else 
+            else
             {
                 if (FinishTrigger.instance.isFinish == true)
                 {
-                    
+
                     if (bricks.Count > 0)
                     {
                         isMouseDown = true;
@@ -161,8 +152,8 @@ public class PlayerController : MonoBehaviour
                     frontBrick = null;
                     transform.position += new Vector3(0, -speed * Time.deltaTime, speed * Time.deltaTime);
                 }
-                              
-            } 
+
+            }
         }
     }
     void TabToStart()
@@ -171,22 +162,22 @@ public class PlayerController : MonoBehaviour
         {
             started = true;
         }
-    } 
+    }
     public void HitTheObstacle()
     {
-        started = false;   
-    }  
+        started = false;
+    }
     public void AfterHitTheObstacle()
     {
         _splineFollower.follow = false;
         gameObject.GetComponent<Renderer>().material.SetColor("_Color", Color.blue);
-    } 
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Bricks")
         {
             other.transform.parent = playersBack.transform;
-            ReLocate(other); 
+            ReLocate(other);
             bricks.Add(other.gameObject);
             //Debug.Log(bricks.Count); 
         }
@@ -206,18 +197,15 @@ public class PlayerController : MonoBehaviour
         while (true)
         {
             if (isMouseDown)
-            { 
+            {
                 if (frontBrick == null)
                 {
                     if (bricks.Count > 0)
                     {
-                        
+
                         frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(stairPrefab.transform.localScale.z, stairPrefab.transform.localScale.y, 0), Quaternion.LookRotation(transform.forward));
-                        
-                        if (_nowDestroy)
-                        {
-                            NowDestroy();
-                        }
+
+                        NowDestroy();
                     }
                     else
                     {
@@ -229,14 +217,11 @@ public class PlayerController : MonoBehaviour
                     if (bricks.Count > 0)
                     {
                         frontBrick = Instantiate(stairPrefab, frontPos + new Vector3(stairPrefab.transform.localScale.z, stairPrefab.transform.localScale.y, 0), Quaternion.LookRotation(transform.forward));
-                        
-                        if (_nowDestroy)
-                        {
-                            NowDestroy();
-                        }
+
+                        NowDestroy();
                     }
                     else
-                    { 
+                    {
                         isMouseDown = false;
                         frontBrick = null;
                         gameOver = true;
@@ -248,12 +233,12 @@ public class PlayerController : MonoBehaviour
                 }
             }
             yield return new WaitForSeconds(0.06f);
-        } 
+        }
         //} 
     }
 
     private void NowDestroy()
-    { 
+    {
         var gameObject = bricks[bricks.Count - 1];
         bricks.Remove(gameObject);
         Destroy(gameObject);
